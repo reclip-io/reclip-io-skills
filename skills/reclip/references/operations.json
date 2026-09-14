@@ -1,0 +1,148 @@
+{
+  "source": {
+    "repository": "https://github.com/asterism-software/reclip-io",
+    "branch": "api-dev",
+    "commit": "2059685938ec59f5277269b2ca73b723253be45d",
+    "api_version": "1.0.0-beta.1"
+  },
+  "operations": [
+    {
+      "method": "POST",
+      "path": "/tools/roblox_rant/projects",
+      "operation_id": "create_roblox_composition",
+      "description": "Required scopes: projects:write. Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "GET",
+      "path": "/tools/roblox_rant/projects/{id}",
+      "operation_id": "get_roblox_composition",
+      "description": "Required scopes: projects:read. Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "GET",
+      "path": "/me",
+      "operation_id": "get_api_identity",
+      "description": "Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "GET",
+      "path": "/tools",
+      "operation_id": "list_tools",
+      "description": "Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "GET",
+      "path": "/tools/{tool}",
+      "operation_id": "get_tool_schema",
+      "description": "Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "GET",
+      "path": "/tools/{tool}/catalog",
+      "operation_id": "get_tool_catalog",
+      "description": "Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "POST",
+      "path": "/assets/uploads",
+      "operation_id": "create_upload",
+      "description": "Required scopes: assets:write. Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "POST",
+      "path": "/assets/{id}/confirm",
+      "operation_id": "confirm_upload",
+      "description": "Required scopes: assets:write. Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "GET",
+      "path": "/assets/{id}",
+      "operation_id": "get_asset",
+      "description": "Required scopes: assets:read. Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "GET",
+      "path": "/assets/{id}/download",
+      "operation_id": "get_download_url",
+      "description": "Required scopes: assets:read. Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "POST",
+      "path": "/jobs/quote",
+      "operation_id": "quote_job",
+      "description": "Required scopes: jobs:write. Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "POST",
+      "path": "/jobs",
+      "operation_id": "create_job",
+      "description": "Required scopes: jobs:write. Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "GET",
+      "path": "/jobs",
+      "operation_id": "list_jobs",
+      "description": "Required scopes: jobs:read. Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "GET",
+      "path": "/jobs/{id}",
+      "operation_id": "get_job",
+      "description": "Required scopes: jobs:read. Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "POST",
+      "path": "/jobs/{id}/cancel",
+      "operation_id": "cancel_job",
+      "description": "Required scopes: jobs:write. Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "GET",
+      "path": "/jobs/{id}/clips",
+      "operation_id": "list_job_clips",
+      "description": "Required scopes: jobs:read + assets:read. Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "GET",
+      "path": "/clips/{id}",
+      "operation_id": "get_clip",
+      "description": "Required scopes: assets:read. Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "PATCH",
+      "path": "/clips/{id}",
+      "operation_id": "save_clip_captions",
+      "description": "Required scopes: assets:write. Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "POST",
+      "path": "/clips/{id}/exports",
+      "operation_id": "export_clip_revision",
+      "description": "Required scopes: jobs:write + assets:read. Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "POST",
+      "path": "/projects",
+      "operation_id": "create_project",
+      "description": "Required scopes: projects:write. Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "GET",
+      "path": "/projects",
+      "operation_id": "list_projects",
+      "description": "Required scopes: projects:read. Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{id}",
+      "operation_id": "get_project",
+      "description": "Required scopes: projects:read. Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "GET",
+      "path": "/usage",
+      "operation_id": "get_usage_and_limits",
+      "description": "Required scopes: usage:read. Beta API. Availability depends on deployment enablement."
+    }
+  ]
+}

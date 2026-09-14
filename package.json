@@ -1,0 +1,10 @@
+{
+  "name": "reclip-io-skills",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "test": "python3 scripts/validate_skill.py && python3 -m unittest discover -s skills/reclip/tests -v",
+    "test:live": "python3 scripts/verify_live.py"
+  }
+}

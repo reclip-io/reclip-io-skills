@@ -1,0 +1,15 @@
+{
+  "name": "reclip-io-skills",
+  "version": "1.0.0",
+  "description": "Reclip media workflow skills for coding agents",
+  "homepage": "https://github.com/ricciflow-api/reclip-io-skills",
+  "repository": "https://github.com/ricciflow-api/reclip-io-skills",
+  "license": "MIT",
+  "skills": [
+    {
+      "name": "reclip",
+      "path": "skills/reclip",
+      "description": "Run Reclip video, image, and audio workflows through the public API."
+    }
+  ]
+}

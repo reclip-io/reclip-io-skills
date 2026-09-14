@@ -1,0 +1,4 @@
+interface:
+  display_name: "Reclip"
+  short_description: "Run Reclip video, image, and audio workflows"
+  default_prompt: "Use $reclip to complete my media workflow within the credit budget I authorize."

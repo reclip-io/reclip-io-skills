@@ -1,0 +1,2484 @@
+{
+  "source": {
+    "repository": "https://github.com/asterism-software/reclip-io",
+    "branch": "api-dev",
+    "commit": "2059685938ec59f5277269b2ca73b723253be45d",
+    "api_version": "1.0.0-beta.1"
+  },
+  "tools": [
+    {
+      "id": "ai_clone",
+      "title": "AI Video Clone",
+      "description": "Create an animated clone from a motion video and character image.",
+      "minimum_tier": "starter",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "motion_asset_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "character_asset_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "prompt": {
+            "type": "string",
+            "maxLength": 2500
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "720p",
+              "1080p"
+            ]
+          },
+          "motion_duration_seconds": {
+            "type": "number",
+            "minimum": 3,
+            "maximum": 30
+          }
+        },
+        "required": [
+          "motion_asset_id",
+          "character_asset_id",
+          "prompt",
+          "mode",
+          "motion_duration_seconds"
+        ],
+        "additionalProperties": false
+      },
+      "upload": {
+        "max_bytes": 104857600,
+        "mime_types": [
+          "video/mp4",
+          "video/quicktime",
+          "image/jpeg",
+          "image/png"
+        ]
+      },
+      "credit_policy": {
+        "kind": "metered",
+        "credits": null,
+        "label": "Credits depend on duration and provider"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/ai_clone/catalog"
+    },
+    {
+      "id": "ai_video_generator",
+      "title": "AI Video Generator",
+      "description": "Generate videos from text prompts or reference images.",
+      "minimum_tier": "starter",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          "model": {
+            "type": "string",
+            "enum": [
+              "veo3_fast",
+              "grok_imagine",
+              "google_omni",
+              "kling",
+              "seedance2",
+              "seedance2_fast",
+              "seedance2_mini"
+            ]
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "9:16",
+              "16:9"
+            ]
+          },
+          "duration_seconds": {
+            "type": "integer",
+            "minimum": 4,
+            "maximum": 15
+          },
+          "variants": {
+            "type": "number",
+            "const": 1
+          },
+          "reference_kind": {
+            "type": "string",
+            "enum": [
+              "generic",
+              "frames"
+            ]
+          },
+          "grok_mode": {
+            "type": "string",
+            "enum": [
+              "normal",
+              "fun",
+              "spicy"
+            ]
+          },
+          "grok_resolution": {
+            "type": "string",
+            "enum": [
+              "480p",
+              "720p"
+            ]
+          },
+          "seedance_resolution": {
+            "type": "string",
+            "enum": [
+              "480p",
+              "720p",
+              "1080p"
+            ]
+          },
+          "omni_resolution": {
+            "type": "string",
+            "enum": [
+              "720p",
+              "1080p",
+              "4K"
+            ]
+          },
+          "audio_enabled": {
+            "type": "boolean"
+          },
+          "input_asset_ids": {
+            "maxItems": 9,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        },
+        "required": [
+          "prompt",
+          "model",
+          "format",
+          "duration_seconds",
+          "variants",
+          "reference_kind",
+          "grok_mode",
+          "grok_resolution",
+          "seedance_resolution",
+          "omni_resolution",
+          "audio_enabled",
+          "input_asset_ids"
+        ],
+        "additionalProperties": false
+      },
+      "upload": {
+        "max_bytes": 10485760,
+        "mime_types": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ]
+      },
+      "credit_policy": {
+        "kind": "metered",
+        "credits": null,
+        "label": "Credits depend on model and duration"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/ai_video_generator/catalog"
+    },
+    {
+      "id": "ai_ad_generator",
+      "title": "AI Ad Generator",
+      "description": "Create a product video ad from an image and prompt.",
+      "minimum_tier": "starter",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          "model": {
+            "type": "string",
+            "enum": [
+              "veo3_fast",
+              "grok_imagine",
+              "google_omni",
+              "kling",
+              "seedance2",
+              "seedance2_fast",
+              "seedance2_mini"
+            ]
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "9:16",
+              "16:9"
+            ]
+          },
+          "duration_seconds": {
+            "type": "integer",
+            "minimum": 4,
+            "maximum": 15
+          },
+          "variants": {
+            "type": "number",
+            "const": 1
+          },
+          "grok_mode": {
+            "type": "string",
+            "enum": [
+              "normal",
+              "fun",
+              "spicy"
+            ]
+          },
+          "grok_resolution": {
+            "type": "string",
+            "enum": [
+              "480p",
+              "720p"
+            ]
+          },
+          "seedance_resolution": {
+            "type": "string",
+            "enum": [
+              "480p",
+              "720p",
+              "1080p"
+            ]
+          },
+          "omni_resolution": {
+            "type": "string",
+            "enum": [
+              "720p",
+              "1080p",
+              "4K"
+            ]
+          },
+          "audio_enabled": {
+            "type": "boolean"
+          },
+          "product_asset_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "avatar_asset_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "prompt",
+          "model",
+          "format",
+          "duration_seconds",
+          "variants",
+          "grok_mode",
+          "grok_resolution",
+          "seedance_resolution",
+          "omni_resolution",
+          "audio_enabled",
+          "product_asset_id",
+          "avatar_asset_id"
+        ],
+        "additionalProperties": false
+      },
+      "upload": {
+        "max_bytes": 10485760,
+        "mime_types": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ]
+      },
+      "credit_policy": {
+        "kind": "metered",
+        "credits": null,
+        "label": "Credits depend on model and duration"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/ai_ad_generator/catalog"
+    },
+    {
+      "id": "ai_image_generator",
+      "title": "AI Image Generator",
+      "description": "Generate images from prompts with selectable AI models.",
+      "minimum_tier": "starter",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "input_asset_ids": {
+            "maxItems": 3,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          "prompt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          "model": {
+            "type": "string",
+            "enum": [
+              "nano-banana-2",
+              "nano-banana-pro",
+              "gpt-image-2"
+            ]
+          },
+          "aspect_ratio": {
+            "type": "string",
+            "enum": [
+              "1:1",
+              "9:16",
+              "16:9"
+            ]
+          }
+        },
+        "required": [
+          "input_asset_ids",
+          "prompt",
+          "model",
+          "aspect_ratio"
+        ],
+        "additionalProperties": false
+      },
+      "upload": {
+        "max_bytes": 10485760,
+        "mime_types": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ]
+      },
+      "credit_policy": {
+        "kind": "metered",
+        "credits": null,
+        "label": "3 credits · Pro model 7 credits"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/ai_image_generator/catalog"
+    },
+    {
+      "id": "image_background_remover",
+      "title": "Remove Image Background",
+      "description": "Remove or replace an image background with selectable AI models.",
+      "minimum_tier": "starter",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "file_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "model": {
+            "type": "string",
+            "enum": [
+              "recraft",
+              "flux-kontext-pro",
+              "flux-kontext-max"
+            ]
+          }
+        },
+        "required": [
+          "asset_id",
+          "file_name",
+          "model"
+        ],
+        "additionalProperties": false
+      },
+      "upload": {
+        "max_bytes": 5242880,
+        "mime_types": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ]
+      },
+      "credit_policy": {
+        "kind": "metered",
+        "credits": null,
+        "label": "1–4 credits depending on model"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/image_background_remover/catalog"
+    },
+    {
+      "id": "ai_clipper",
+      "title": "AI Video Clipper",
+      "description": "Find and render the strongest clips from long videos.",
+      "minimum_tier": "free",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "source_url": {
+            "type": "string",
+            "maxLength": 2048,
+            "format": "uri"
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "maximum_source_bytes": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 2000000000
+              },
+              "language": {
+                "type": "string",
+                "minLength": 2,
+                "maxLength": 35
+              },
+              "captions_enabled": {
+                "default": true,
+                "type": "boolean"
+              },
+              "caption_mode": {
+                "default": "single_word",
+                "type": "string",
+                "enum": [
+                  "single_word",
+                  "three_word_highlight"
+                ]
+              },
+              "caption_group_size": {
+                "default": 1,
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 6
+              },
+              "caption_preset_id": {
+                "default": "lit",
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_-]{0,39}$"
+              },
+              "caption_style": {
+                "type": "object",
+                "properties": {
+                  "font_family": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "font_size": {
+                    "type": "integer",
+                    "minimum": 24,
+                    "maximum": 240
+                  },
+                  "position_y_percent": {
+                    "type": "number",
+                    "minimum": 6,
+                    "maximum": 94
+                  },
+                  "base_color": {
+                    "type": "string",
+                    "pattern": "^#[0-9A-F]{6}$"
+                  },
+                  "highlight_color": {
+                    "type": "string",
+                    "pattern": "^#[0-9A-F]{6}$"
+                  },
+                  "outline_color": {
+                    "type": "string",
+                    "pattern": "^#[0-9A-F]{6}$"
+                  },
+                  "outline_width": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 16
+                  },
+                  "background_color": {
+                    "type": "string",
+                    "pattern": "^#[0-9A-F]{6}$"
+                  },
+                  "background_opacity": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "layout_version": {
+                    "type": "number",
+                    "const": 2
+                  },
+                  "word_spacing": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 12
+                  }
+                },
+                "required": [
+                  "font_family",
+                  "font_size",
+                  "position_y_percent",
+                  "base_color",
+                  "highlight_color",
+                  "outline_color",
+                  "outline_width",
+                  "background_color",
+                  "background_opacity",
+                  "word_spacing"
+                ],
+                "additionalProperties": false
+              },
+              "video_layout_mode": {
+                "default": "blur",
+                "type": "string",
+                "enum": [
+                  "blur",
+                  "fill",
+                  "gameplay"
+                ]
+              },
+              "clip_length_mode": {
+                "default": "auto",
+                "type": "string",
+                "enum": [
+                  "auto",
+                  "short",
+                  "medium"
+                ]
+              },
+              "analysis_start_seconds": {
+                "default": 0,
+                "type": "number",
+                "minimum": 0,
+                "maximum": 43200
+              },
+              "analysis_end_seconds": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 43200
+              },
+              "source_metadata": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 300
+                  },
+                  "creator": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  "thumbnail_url": {
+                    "type": "string",
+                    "maxLength": 2048,
+                    "format": "uri"
+                  },
+                  "source_size_bytes": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "captions_enabled",
+              "caption_mode",
+              "caption_group_size",
+              "caption_preset_id",
+              "video_layout_mode",
+              "clip_length_mode",
+              "analysis_start_seconds"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "options"
+        ],
+        "additionalProperties": false
+      },
+      "upload": {
+        "max_bytes": 2147483648,
+        "mime_types": [
+          "video/mp4",
+          "video/quicktime",
+          "video/webm"
+        ]
+      },
+      "credit_policy": {
+        "kind": "metered",
+        "credits": null,
+        "label": "Duration-based processing + 5 credits per 100 MB for YouTube imports"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/ai_clipper/catalog"
+    },
+    {
+      "id": "ai_captions",
+      "title": "AI Captions",
+      "description": "Add stylish captions to videos and translate subtitles into another language.",
+      "minimum_tier": "free",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "source_url": {
+            "type": "string",
+            "maxLength": 2048,
+            "format": "uri"
+          },
+          "duration_seconds": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 7200
+          },
+          "start_seconds": {
+            "default": 0,
+            "type": "number",
+            "minimum": 0
+          },
+          "end_seconds": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "maximum_source_bytes": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 2000000000
+              },
+              "language": {
+                "type": "string"
+              },
+              "target_language": {
+                "type": "string"
+              },
+              "caption_mode": {
+                "default": "single_word",
+                "type": "string",
+                "enum": [
+                  "single_word",
+                  "three_word_highlight"
+                ]
+              },
+              "caption_group_size": {
+                "default": 1,
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 6
+              },
+              "caption_preset_id": {
+                "default": "lit",
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_-]{0,39}$"
+              },
+              "caption_style": {
+                "type": "object",
+                "properties": {
+                  "font_family": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "font_size": {
+                    "type": "integer",
+                    "minimum": 24,
+                    "maximum": 240
+                  },
+                  "position_y_percent": {
+                    "type": "number",
+                    "minimum": 6,
+                    "maximum": 94
+                  },
+                  "base_color": {
+                    "type": "string",
+                    "pattern": "^#[0-9A-F]{6}$"
+                  },
+                  "highlight_color": {
+                    "type": "string",
+                    "pattern": "^#[0-9A-F]{6}$"
+                  },
+                  "outline_color": {
+                    "type": "string",
+                    "pattern": "^#[0-9A-F]{6}$"
+                  },
+                  "outline_width": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 16
+                  },
+                  "background_color": {
+                    "type": "string",
+                    "pattern": "^#[0-9A-F]{6}$"
+                  },
+                  "background_opacity": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "layout_version": {
+                    "type": "number",
+                    "const": 2
+                  },
+                  "word_spacing": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 12
+                  }
+                },
+                "required": [
+                  "font_family",
+                  "font_size",
+                  "position_y_percent",
+                  "base_color",
+                  "highlight_color",
+                  "outline_color",
+                  "outline_width",
+                  "background_color",
+                  "background_opacity",
+                  "word_spacing"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "caption_mode",
+              "caption_group_size",
+              "caption_preset_id",
+              "caption_style"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "duration_seconds",
+          "start_seconds",
+          "options"
+        ],
+        "additionalProperties": false
+      },
+      "upload": {
+        "max_bytes": 4294967296,
+        "mime_types": [
+          "video/mp4",
+          "video/quicktime",
+          "video/webm"
+        ]
+      },
+      "credit_policy": {
+        "kind": "metered",
+        "credits": null,
+        "label": "Duration-based captions and translation + 5 credits per 100 MB for YouTube imports"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/ai_captions/catalog"
+    },
+    {
+      "id": "video_to_prompt",
+      "title": "Video to Prompt Generator",
+      "description": "Reconstruct an editable AI video prompt from any supported video.",
+      "minimum_tier": "starter",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "file_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "analysis_start_seconds": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 86400
+          },
+          "analysis_end_seconds": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 86400
+          }
+        },
+        "required": [
+          "asset_id",
+          "file_name",
+          "analysis_start_seconds",
+          "analysis_end_seconds"
+        ],
+        "additionalProperties": false
+      },
+      "upload": {
+        "max_bytes": 524288000,
+        "mime_types": [
+          "video/mp4",
+          "video/quicktime",
+          "video/webm"
+        ]
+      },
+      "credit_policy": {
+        "kind": "metered",
+        "credits": null,
+        "label": "5 credits per started 30 seconds"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/video_to_prompt/catalog"
+    },
+    {
+      "id": "caption_remover",
+      "title": "Caption Remover",
+      "description": "Remove burned-in captions from a video.",
+      "minimum_tier": "starter",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "file_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "duration_seconds": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 90
+          },
+          "region": {
+            "type": "object",
+            "properties": {
+              "x": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "y": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "width": {
+                "type": "number",
+                "minimum": 2,
+                "maximum": 100
+              },
+              "height": {
+                "type": "number",
+                "minimum": 2,
+                "maximum": 100
+              }
+            },
+            "required": [
+              "x",
+              "y",
+              "width",
+              "height"
+            ],
+            "additionalProperties": false
+          },
+          "catalog_tool_code": {
+            "type": "string",
+            "enum": [
+              "caption_remover",
+              "video_subtitle_remover",
+              "watermark_remover"
+            ]
+          }
+        },
+        "required": [
+          "asset_id",
+          "file_name",
+          "duration_seconds",
+          "region"
+        ],
+        "additionalProperties": false
+      },
+      "upload": {
+        "max_bytes": 524288000,
+        "mime_types": [
+          "video/mp4",
+          "video/quicktime",
+          "video/webm",
+          "video/x-msvideo",
+          "video/x-matroska",
+          "video/x-ms-wmv"
+        ]
+      },
+      "credit_policy": {
+        "kind": "metered",
+        "credits": null,
+        "label": "Credits depend on source duration"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/caption_remover/catalog"
+    },
+    {
+      "id": "video_subtitle_remover",
+      "title": "Subtitle Removal",
+      "description": "Remove hardcoded and burned-in subtitles from a video with AI.",
+      "minimum_tier": "starter",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "file_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "duration_seconds": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 90
+          },
+          "region": {
+            "type": "object",
+            "properties": {
+              "x": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "y": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "width": {
+                "type": "number",
+                "minimum": 2,
+                "maximum": 100
+              },
+              "height": {
+                "type": "number",
+                "minimum": 2,
+                "maximum": 100
+              }
+            },
+            "required": [
+              "x",
+              "y",
+              "width",
+              "height"
+            ],
+            "additionalProperties": false
+          },
+          "catalog_tool_code": {
+            "type": "string",
+            "enum": [
+              "caption_remover",
+              "video_subtitle_remover",
+              "watermark_remover"
+            ]
+          }
+        },
+        "required": [
+          "asset_id",
+          "file_name",
+          "duration_seconds",
+          "region"
+        ],
+        "additionalProperties": false
+      },
+      "upload": {
+        "max_bytes": 524288000,
+        "mime_types": [
+          "video/mp4",
+          "video/quicktime",
+          "video/webm",
+          "video/x-msvideo",
+          "video/x-matroska",
+          "video/x-ms-wmv"
+        ]
+      },
+      "credit_policy": {
+        "kind": "metered",
+        "credits": null,
+        "label": "Credits depend on source duration"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/video_subtitle_remover/catalog"
+    },
+    {
+      "id": "watermark_remover",
+      "title": "Watermark Remover",
+      "description": "Remove a selected watermark region from a video.",
+      "minimum_tier": "starter",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "file_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "duration_seconds": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 90
+          },
+          "region": {
+            "type": "object",
+            "properties": {
+              "x": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "y": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "width": {
+                "type": "number",
+                "minimum": 2,
+                "maximum": 100
+              },
+              "height": {
+                "type": "number",
+                "minimum": 2,
+                "maximum": 100
+              }
+            },
+            "required": [
+              "x",
+              "y",
+              "width",
+              "height"
+            ],
+            "additionalProperties": false
+          },
+          "catalog_tool_code": {
+            "type": "string",
+            "enum": [
+              "caption_remover",
+              "video_subtitle_remover",
+              "watermark_remover"
+            ]
+          }
+        },
+        "required": [
+          "asset_id",
+          "file_name",
+          "duration_seconds",
+          "region"
+        ],
+        "additionalProperties": false
+      },
+      "upload": {
+        "max_bytes": 524288000,
+        "mime_types": [
+          "video/mp4",
+          "video/quicktime",
+          "video/webm",
+          "video/x-msvideo",
+          "video/x-matroska",
+          "video/x-ms-wmv"
+        ]
+      },
+      "credit_policy": {
+        "kind": "metered",
+        "credits": null,
+        "label": "Credits depend on source duration"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/watermark_remover/catalog"
+    },
+    {
+      "id": "sora_watermark",
+      "title": "Sora Watermark Remover",
+      "description": "Remove a Sora watermark from generated videos.",
+      "minimum_tier": "free",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "source_url": {
+            "type": "string",
+            "maxLength": 2048,
+            "format": "uri"
+          },
+          "file_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          }
+        },
+        "required": [
+          "source_url",
+          "file_name"
+        ],
+        "additionalProperties": false
+      },
+      "upload": null,
+      "credit_policy": {
+        "kind": "free",
+        "credits": 0,
+        "label": "No credits used"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/sora_watermark/catalog"
+    },
+    {
+      "id": "ai_voiceover",
+      "title": "AI Voiceover",
+      "description": "Turn text into a natural AI voiceover.",
+      "minimum_tier": "free",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "script": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10000
+          },
+          "voice_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "model_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "public_owner_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "voice_source": {
+            "type": "string",
+            "enum": [
+              "library",
+              "custom"
+            ]
+          },
+          "stability": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "similarity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "speed": {
+            "type": "number",
+            "minimum": 0.7,
+            "maximum": 1.2
+          },
+          "use_speaker_boost": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "script",
+          "voice_id",
+          "model_id",
+          "public_owner_id",
+          "voice_source",
+          "stability",
+          "similarity",
+          "speed",
+          "use_speaker_boost"
+        ],
+        "additionalProperties": false
+      },
+      "upload": null,
+      "credit_policy": {
+        "kind": "free",
+        "credits": 0,
+        "label": "No credits used"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/ai_voiceover/catalog"
+    },
+    {
+      "id": "translate_and_dub",
+      "title": "AI Video Translator",
+      "description": "Translate speech into a new AI voice and replace burned-in subtitles, headlines, offers, and calls to action.",
+      "minimum_tier": "free",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "file_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "duration_seconds": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 90
+          },
+          "source_language_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "target_language_code": {
+            "type": "string"
+          },
+          "voice_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "model_id": {
+            "type": "string"
+          },
+          "public_owner_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "voice_source": {
+            "type": "string",
+            "enum": [
+              "library",
+              "custom"
+            ]
+          },
+          "stability": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "similarity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "speed": {
+            "type": "number",
+            "minimum": 0.7,
+            "maximum": 1.2
+          },
+          "use_speaker_boost": {
+            "type": "boolean"
+          },
+          "caption_content_mode": {
+            "default": "auto",
+            "type": "string",
+            "enum": [
+              "auto",
+              "speech_subtitles",
+              "independent_text"
+            ]
+          },
+          "caption_region_override": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "x": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "y": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "width": {
+                    "type": "number",
+                    "minimum": 2,
+                    "maximum": 100
+                  },
+                  "height": {
+                    "type": "number",
+                    "minimum": 2,
+                    "maximum": 100
+                  }
+                },
+                "required": [
+                  "x",
+                  "y",
+                  "width",
+                  "height"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "caption_group_size": {
+            "type": "integer",
+            "minimum": 3,
+            "maximum": 8
+          },
+          "caption_style": {
+            "type": "object",
+            "properties": {
+              "font_family": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "font_size": {
+                "type": "integer",
+                "minimum": 32,
+                "maximum": 112
+              },
+              "base_color": {
+                "type": "string",
+                "pattern": "^#[0-9A-Fa-f]{6}$"
+              },
+              "highlight_color": {
+                "type": "string",
+                "pattern": "^#[0-9A-Fa-f]{6}$"
+              },
+              "outline_color": {
+                "type": "string",
+                "pattern": "^#[0-9A-Fa-f]{6}$"
+              },
+              "outline_width": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 20
+              },
+              "background_color": {
+                "type": "string",
+                "pattern": "^#[0-9A-Fa-f]{6}$"
+              },
+              "background_opacity": {
+                "type": "number",
+                "const": 100
+              },
+              "word_spacing": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 30
+              }
+            },
+            "required": [
+              "font_family",
+              "font_size",
+              "base_color",
+              "highlight_color",
+              "outline_color",
+              "outline_width",
+              "background_color",
+              "background_opacity",
+              "word_spacing"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "asset_id",
+          "file_name",
+          "duration_seconds",
+          "source_language_code",
+          "target_language_code",
+          "voice_id",
+          "model_id",
+          "public_owner_id",
+          "voice_source",
+          "stability",
+          "similarity",
+          "speed",
+          "use_speaker_boost",
+          "caption_content_mode",
+          "caption_group_size",
+          "caption_style"
+        ],
+        "additionalProperties": false
+      },
+      "upload": {
+        "max_bytes": 524288000,
+        "mime_types": [
+          "video/mp4",
+          "video/quicktime",
+          "video/webm"
+        ]
+      },
+      "credit_policy": {
+        "kind": "metered",
+        "credits": null,
+        "label": "20 credits per started minute"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/translate_and_dub/catalog"
+    },
+    {
+      "id": "roblox_rant",
+      "title": "Roblox Rant",
+      "description": "Create a narrated short over Roblox gameplay.",
+      "minimum_tier": "starter",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "import_background",
+              "generate_narration",
+              "prepare_narration",
+              "render"
+            ]
+          },
+          "input_asset_ids": {
+            "maxItems": 2,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          "project_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "background_key": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "script": {
+            "type": "string",
+            "maxLength": 10000
+          },
+          "file_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "voice_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "model_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "public_owner_id": {
+            "type": "null"
+          },
+          "voice_source": {
+            "type": "string",
+            "enum": [
+              "library",
+              "custom"
+            ]
+          },
+          "stability": {
+            "type": "number",
+            "const": 0.5
+          },
+          "similarity": {
+            "type": "number",
+            "const": 0.75
+          },
+          "speed": {
+            "type": "number",
+            "const": 1
+          },
+          "use_speaker_boost": {
+            "type": "boolean",
+            "const": true
+          },
+          "duration_seconds": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 3600
+          },
+          "video_layout": {
+            "type": "string",
+            "const": "blur"
+          },
+          "caption_style": {
+            "type": "string",
+            "enum": [
+              "single_word",
+              "three_word_highlight"
+            ]
+          },
+          "caption_group_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 8
+          },
+          "captions_enabled": {
+            "type": "boolean",
+            "const": true
+          },
+          "caption_words": {
+            "maxItems": 20000,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "start_seconds": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 3600
+                },
+                "end_seconds": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 3600
+                },
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 500
+                },
+                "color": {
+                  "type": "string",
+                  "pattern": "^#[0-9A-Fa-f]{6}$"
+                }
+              },
+              "required": [
+                "id",
+                "start_seconds",
+                "end_seconds",
+                "text"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "caption_editor_style": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "font_family": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "font_size": {
+                    "type": "integer",
+                    "minimum": 12,
+                    "maximum": 240
+                  },
+                  "base_color": {
+                    "type": "string",
+                    "pattern": "^#[0-9A-Fa-f]{6}$"
+                  },
+                  "highlight_color": {
+                    "type": "string",
+                    "pattern": "^#[0-9A-Fa-f]{6}$"
+                  },
+                  "outline_color": {
+                    "type": "string",
+                    "pattern": "^#[0-9A-Fa-f]{6}$"
+                  },
+                  "outline_width": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 20
+                  },
+                  "background_color": {
+                    "type": "string",
+                    "pattern": "^#[0-9A-Fa-f]{6}$"
+                  },
+                  "background_opacity": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "position_y_percent": {
+                    "type": "number",
+                    "minimum": 5,
+                    "maximum": 95
+                  },
+                  "layout_version": {
+                    "type": "number",
+                    "const": 2
+                  },
+                  "word_spacing": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 30
+                  }
+                },
+                "required": [
+                  "font_family",
+                  "font_size",
+                  "base_color",
+                  "highlight_color",
+                  "outline_color",
+                  "outline_width",
+                  "background_color",
+                  "background_opacity",
+                  "position_y_percent",
+                  "word_spacing"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "operation",
+          "input_asset_ids",
+          "project_id",
+          "background_key",
+          "script",
+          "file_name",
+          "voice_id",
+          "model_id",
+          "public_owner_id",
+          "voice_source",
+          "stability",
+          "similarity",
+          "speed",
+          "use_speaker_boost",
+          "duration_seconds",
+          "video_layout",
+          "caption_style",
+          "caption_group_size",
+          "captions_enabled",
+          "caption_words",
+          "caption_editor_style"
+        ],
+        "additionalProperties": false
+      },
+      "upload": {
+        "max_bytes": 524288000,
+        "mime_types": [
+          "video/mp4",
+          "video/quicktime",
+          "video/webm",
+          "audio/mpeg",
+          "audio/mp4",
+          "audio/wav",
+          "audio/x-wav"
+        ]
+      },
+      "credit_policy": {
+        "kind": "metered",
+        "credits": null,
+        "label": "Credits depend on narration and render duration"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/roblox_rant/catalog"
+    },
+    {
+      "id": "video_downloader",
+      "title": "Video Downloader",
+      "description": "Download videos from supported social platforms with a paid plan.",
+      "minimum_tier": "starter",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "source_url": {
+            "type": "string",
+            "maxLength": 2048,
+            "format": "uri"
+          },
+          "platform": {
+            "type": "string",
+            "enum": [
+              "youtube",
+              "tiktok",
+              "instagram"
+            ]
+          },
+          "file_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "format_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[A-Za-z0-9._-]+$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "format_height": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 144,
+                "maximum": 4320
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "format_size_bytes": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "maximum_download_bytes": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 2000000000
+          },
+          "has_audio": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "source_title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "source_creator": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "source_thumbnail_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2048,
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "source_duration_seconds": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 86400
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "source_url",
+          "platform",
+          "file_name",
+          "format_id",
+          "maximum_download_bytes",
+          "has_audio",
+          "source_title",
+          "source_creator",
+          "source_thumbnail_url",
+          "source_duration_seconds"
+        ],
+        "additionalProperties": false
+      },
+      "upload": null,
+      "credit_policy": {
+        "kind": "metered",
+        "credits": null,
+        "label": "5 credits per 100 MB · Minimum 5 credits per video"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/video_downloader/catalog"
+    },
+    {
+      "id": "youtube_transcript",
+      "title": "YouTube Transcript",
+      "description": "Extract a timestamped transcript from YouTube.",
+      "minimum_tier": "free",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "source_url": {
+            "type": "string",
+            "maxLength": 2048,
+            "format": "uri"
+          },
+          "include_timestamps": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "source_url",
+          "include_timestamps"
+        ],
+        "additionalProperties": false
+      },
+      "upload": null,
+      "credit_policy": {
+        "kind": "fixed",
+        "credits": 2,
+        "label": "2 credits per successful transcript"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/youtube_transcript/catalog"
+    },
+    {
+      "id": "tiktok_transcript",
+      "title": "TikTok Transcript",
+      "description": "Extract a timestamped transcript from TikTok.",
+      "minimum_tier": "free",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "source_url": {
+            "type": "string",
+            "maxLength": 2048,
+            "format": "uri"
+          },
+          "include_timestamps": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "source_url",
+          "include_timestamps"
+        ],
+        "additionalProperties": false
+      },
+      "upload": null,
+      "credit_policy": {
+        "kind": "fixed",
+        "credits": 2,
+        "label": "2 credits per successful transcript"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/tiktok_transcript/catalog"
+    },
+    {
+      "id": "mp4_to_mp3",
+      "title": "MP4 to MP3 & Remove Audio",
+      "description": "Extract MP3 audio from a video or create a silent MP4 in one click.",
+      "minimum_tier": "free",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "extract_mp3",
+              "mute_video"
+            ]
+          },
+          "file_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          }
+        },
+        "required": [
+          "asset_id",
+          "operation",
+          "file_name"
+        ],
+        "additionalProperties": false
+      },
+      "upload": {
+        "max_bytes": 524288000,
+        "mime_types": [
+          "video/mp4",
+          "video/quicktime",
+          "video/webm",
+          "video/x-msvideo",
+          "video/x-matroska",
+          "video/x-ms-wmv"
+        ]
+      },
+      "credit_policy": {
+        "kind": "free",
+        "credits": 0,
+        "label": "Unlimited · no credits used"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/mp4_to_mp3/catalog"
+    },
+    {
+      "id": "video_compressor",
+      "title": "Video Compressor",
+      "description": "Reduce video file size with practical quality presets.",
+      "minimum_tier": "free",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "file_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "crf": {
+            "type": "integer",
+            "minimum": 18,
+            "maximum": 40
+          },
+          "preset": {
+            "type": "string",
+            "enum": [
+              "ultrafast",
+              "superfast",
+              "veryfast",
+              "faster",
+              "fast",
+              "medium",
+              "slow"
+            ]
+          },
+          "max_width": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 160,
+                "maximum": 4096
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "max_fps": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 120
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "audio_bitrate_kbps": {
+            "type": "integer",
+            "minimum": 32,
+            "maximum": 320
+          }
+        },
+        "required": [
+          "asset_id",
+          "file_name",
+          "crf",
+          "preset",
+          "max_width",
+          "max_fps",
+          "audio_bitrate_kbps"
+        ],
+        "additionalProperties": false
+      },
+      "upload": {
+        "max_bytes": 262144000,
+        "mime_types": [
+          "video/mp4",
+          "video/quicktime",
+          "video/webm",
+          "video/x-msvideo",
+          "video/x-matroska",
+          "video/x-ms-wmv"
+        ]
+      },
+      "credit_policy": {
+        "kind": "free",
+        "credits": 0,
+        "label": "Free · no credits used"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/video_compressor/catalog"
+    },
+    {
+      "id": "video_cropper",
+      "title": "Video Cropper",
+      "description": "Crop a video to a custom frame or common aspect ratio.",
+      "minimum_tier": "free",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "file_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "rect",
+              "ratio"
+            ]
+          },
+          "crop_x": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "crop_y": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "crop_width": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "crop_height": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "aspect_ratio": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 20
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "anchor": {
+            "type": "string",
+            "enum": [
+              "center",
+              "top",
+              "bottom",
+              "left",
+              "right",
+              "top-left",
+              "top-right",
+              "bottom-left",
+              "bottom-right"
+            ]
+          }
+        },
+        "required": [
+          "asset_id",
+          "file_name",
+          "mode",
+          "crop_x",
+          "crop_y",
+          "crop_width",
+          "crop_height",
+          "aspect_ratio",
+          "anchor"
+        ],
+        "additionalProperties": false
+      },
+      "upload": {
+        "max_bytes": 262144000,
+        "mime_types": [
+          "video/mp4",
+          "video/quicktime",
+          "video/webm",
+          "video/x-msvideo",
+          "video/x-matroska",
+          "video/x-ms-wmv"
+        ]
+      },
+      "credit_policy": {
+        "kind": "free",
+        "credits": 0,
+        "label": "Free · no credits used"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/video_cropper/catalog"
+    },
+    {
+      "id": "video_trimmer",
+      "title": "Video Trimmer",
+      "description": "Trim a precise section from a video.",
+      "minimum_tier": "free",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "file_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "start_time": {
+            "type": "number",
+            "minimum": 0
+          },
+          "end_time": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        },
+        "required": [
+          "asset_id",
+          "file_name",
+          "start_time",
+          "end_time"
+        ],
+        "additionalProperties": false
+      },
+      "upload": {
+        "max_bytes": 262144000,
+        "mime_types": [
+          "video/mp4",
+          "video/quicktime",
+          "video/webm",
+          "video/x-msvideo",
+          "video/x-matroska",
+          "video/x-ms-wmv"
+        ]
+      },
+      "credit_policy": {
+        "kind": "free",
+        "credits": 0,
+        "label": "Free · no credits used"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/video_trimmer/catalog"
+    },
+    {
+      "id": "video_to_gif",
+      "title": "Video to GIF",
+      "description": "Turn a short video segment into an animated GIF.",
+      "minimum_tier": "free",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "file_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "start_time": {
+            "type": "number",
+            "minimum": 0
+          },
+          "end_time": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "fps": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "width": {
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 720
+          }
+        },
+        "required": [
+          "asset_id",
+          "file_name",
+          "start_time",
+          "end_time",
+          "fps",
+          "width"
+        ],
+        "additionalProperties": false
+      },
+      "upload": {
+        "max_bytes": 262144000,
+        "mime_types": [
+          "video/mp4",
+          "video/quicktime",
+          "video/webm",
+          "video/x-msvideo",
+          "video/x-matroska",
+          "video/x-ms-wmv"
+        ]
+      },
+      "credit_policy": {
+        "kind": "free",
+        "credits": 0,
+        "label": "Free · no credits used"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/video_to_gif/catalog"
+    },
+    {
+      "id": "transcription",
+      "title": "Transcription",
+      "description": "Transcribe uploaded video with optional timestamps.",
+      "minimum_tier": "free",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "file_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "duration_seconds": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 5400
+          },
+          "include_timestamps": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "asset_id",
+          "file_name",
+          "duration_seconds",
+          "include_timestamps"
+        ],
+        "additionalProperties": false
+      },
+      "upload": {
+        "max_bytes": 524288000,
+        "mime_types": [
+          "video/mp4",
+          "video/quicktime",
+          "video/webm",
+          "video/x-msvideo",
+          "video/x-matroska",
+          "video/x-ms-wmv"
+        ]
+      },
+      "credit_policy": {
+        "kind": "metered",
+        "credits": null,
+        "label": "Credits depend on source duration"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/transcription/catalog"
+    }
+  ]
+}

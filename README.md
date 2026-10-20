@@ -2,23 +2,23 @@
 
 An installable Reclip skill with a zero-dependency Python client for video, image, and audio workflows. Modeled after [glade-agent-skills](https://github.com/ricciflow-api/glade-agent-skills): one focused skill, executable client, operation references, and offline tests.
 
-**Status:** client release 1.0.0 targets Reclip API **1.0.0-beta.1**, backend `api-dev` commit `2059685938ec59f5277269b2ca73b723253be45d`. The API must be deployed and enabled by its operator. Publishing this repository does not enable production endpoints or certify live provider execution.
+**Status:** client release 1.1.0 targets Reclip API **1.0.0-beta.2**, identified by the source metadata and contract SHA-256 in the bundled catalog. Documentation is at [reclip.io/docs](https://reclip.io/docs). The hosted MCP uses the same workspace credentials. Offline validation does not certify live provider execution.
 
 ## Install
 
 With the Skills CLI:
 
 ```bash
-npx skills add ricciflow-api/reclip-io-skills
+npx skills add reclip-io/reclip-io-skills --skill reclip
 ```
 
 Select `reclip` and your agent in the installer. Alternatively, clone the repository and copy **the entire** `skills/reclip` directory to your agent's skill directory, such as `.agents/skills/reclip` for a project. The installed directory is self-contained; it does not depend on repository-root files.
 
-For Codex, ask the skill installer to install `skills/reclip` from `https://github.com/ricciflow-api/reclip-io-skills`, then reload skills if your agent requires it. Invoke `$reclip`, or ask for a Reclip media workflow.
+For Codex, ask the skill installer to install `skills/reclip` from `https://github.com/reclip-io/reclip-io-skills`, then reload skills if your agent requires it. Invoke `$reclip`, or ask for a Reclip media workflow.
 
 ## Configure and use
 
-Requires Python 3.9+ and an API-enabled paid Reclip workspace. Create a scoped workspace key in Settings → API Keys. Supply `RECLIP_API_KEY` via your environment or secret manager; do not put it in chat or a command argument. `.env.example` documents the variables. The client does **not** automatically load `.env` files.
+Requires Python 3.9+ and an API-enabled paid Reclip workspace. Create a scoped workspace key in the API dashboard → API Keys. Supply `RECLIP_API_KEY` via your environment or secret manager; do not put it in chat or a command argument. `.env.example` documents the variables. The client does **not** automatically load `.env` files.
 
 `RECLIP_API_BASE_URL` defaults to `https://www.reclip.io/api/v1`. Override it only for the Reclip deployment you intend to trust with the key. HTTPS is required except for loopback development.
 
@@ -39,13 +39,13 @@ Budget numbers are user choices, not advertised prices. See the [workflow guide]
 
 ## Coverage
 
-The bundled catalog describes all 24 server tools across clipping/captions, video/image generation, watermark removal, voiceover/dubbing, transcription, downloading, and media conversion. Individual tools retain their source, plan, input, and model restrictions. Browser-only Gemini watermark tools are excluded.
+The bundled catalog describes all 30 tools across clipping/captions, video/image generation, watermark removal, voiceover/dubbing, transcription, downloading, and media conversion. Individual tools retain their source, plan, input, and model restrictions. Both Gemini watermark tools are available through free queued server processing (10 MiB per image, up to 50 images per batch).
 
-The client covers all 23 resource operations in the pinned API contract. It adds durable idempotency state, bounded polling, upload recovery, signed downloads, and explicit per-job credit caps. Exports use editor revisions and saved state; this beta contract provides **no export quote or hard credit cap**. There is no MCP server or natural-language agent endpoint.
+The client covers all 28 resource operations in the pinned API contract. It adds durable idempotency state, bounded polling, upload recovery, signed downloads, and explicit per-job credit caps. Exports use editor revisions and saved state; this beta contract provides **no export quote or hard credit cap**. A Streamable HTTP MCP endpoint at `/api/mcp` exposes the same tools and resource operations with the same workspace key and scopes.
 
 - [Skill instructions](skills/reclip/SKILL.md)
 - [Operations and scopes](skills/reclip/references/operations.md)
-- [API documentation repository](https://github.com/ricciflow-api/reclip-io-api-docs)
+- [API documentation repository](https://github.com/reclip-io/reclip-io-api-docs)
 - [Backend API branch](https://github.com/asterism-software/reclip-io/tree/api-dev)
 
 ## Development

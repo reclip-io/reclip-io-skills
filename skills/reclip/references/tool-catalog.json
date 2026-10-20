@@ -2,10 +2,111 @@
   "source": {
     "repository": "https://github.com/asterism-software/reclip-io",
     "branch": "api-dev",
-    "commit": "2059685938ec59f5277269b2ca73b723253be45d",
-    "api_version": "1.0.0-beta.1"
+    "commit": "c6848d01f46f8b95de0341e669e43c80e192d801",
+    "merged_main": "d5cd323be55a56365543d8b602216d7ca736ce27",
+    "working_tree": true,
+    "api_version": "1.0.0-beta.2",
+    "tool_codes": [
+      "video_upscaler",
+      "ai_clone",
+      "ai_video_generator",
+      "ai_video_editor",
+      "ai_ad_generator",
+      "ai_image_generator",
+      "image_background_remover",
+      "ai_clipper",
+      "clip_discovery",
+      "ai_broll",
+      "ai_captions",
+      "video_to_prompt",
+      "caption_remover",
+      "video_subtitle_remover",
+      "watermark_remover",
+      "sora_watermark",
+      "gemini_watermark_remover",
+      "gemini_watermark_bulk_remover",
+      "ai_voiceover",
+      "translate_and_dub",
+      "roblox_rant",
+      "video_downloader",
+      "youtube_transcript",
+      "tiktok_transcript",
+      "mp4_to_mp3",
+      "video_compressor",
+      "video_cropper",
+      "video_trimmer",
+      "video_to_gif",
+      "transcription"
+    ],
+    "contract_sha256": "90a696cfe77779b6cce038c94a1d477328a805d025187655f0757af7772a527d"
   },
   "tools": [
+    {
+      "id": "video_upscaler",
+      "title": "AI Video Upscaler",
+      "description": "Enhance a clip at 1× or upscale it to 2× or 4× with Topaz AI.",
+      "minimum_tier": "starter",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "file_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "start_time": {
+            "type": "number",
+            "minimum": 0
+          },
+          "end_time": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "upscale_factor": {
+            "anyOf": [
+              {
+                "type": "number",
+                "const": 1
+              },
+              {
+                "type": "number",
+                "const": 2
+              },
+              {
+                "type": "number",
+                "const": 4
+              }
+            ]
+          }
+        },
+        "required": [
+          "asset_id",
+          "file_name",
+          "start_time",
+          "end_time",
+          "upscale_factor"
+        ],
+        "additionalProperties": false
+      },
+      "upload": {
+        "max_bytes": 52428800,
+        "mime_types": ["video/mp4", "video/quicktime", "video/x-matroska"]
+      },
+      "credit_policy": {
+        "kind": "metered",
+        "credits": null,
+        "label": "Credits depend on clip duration and scale"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/video_upscaler/catalog"
+    },
     {
       "id": "ai_clone",
       "title": "AI Video Clone",
@@ -32,10 +133,7 @@
           },
           "mode": {
             "type": "string",
-            "enum": [
-              "720p",
-              "1080p"
-            ]
+            "enum": ["720p", "1080p"]
           },
           "motion_duration_seconds": {
             "type": "number",
@@ -98,10 +196,7 @@
           },
           "format": {
             "type": "string",
-            "enum": [
-              "9:16",
-              "16:9"
-            ]
+            "enum": ["9:16", "16:9"]
           },
           "duration_seconds": {
             "type": "integer",
@@ -114,41 +209,23 @@
           },
           "reference_kind": {
             "type": "string",
-            "enum": [
-              "generic",
-              "frames"
-            ]
+            "enum": ["generic", "frames"]
           },
           "grok_mode": {
             "type": "string",
-            "enum": [
-              "normal",
-              "fun",
-              "spicy"
-            ]
+            "enum": ["normal", "fun"]
           },
           "grok_resolution": {
             "type": "string",
-            "enum": [
-              "480p",
-              "720p"
-            ]
+            "enum": ["480p", "720p"]
           },
           "seedance_resolution": {
             "type": "string",
-            "enum": [
-              "480p",
-              "720p",
-              "1080p"
-            ]
+            "enum": ["480p", "720p", "1080p"]
           },
           "omni_resolution": {
             "type": "string",
-            "enum": [
-              "720p",
-              "1080p",
-              "4K"
-            ]
+            "enum": ["720p", "1080p", "4K"]
           },
           "audio_enabled": {
             "type": "boolean"
@@ -181,11 +258,7 @@
       },
       "upload": {
         "max_bytes": 10485760,
-        "mime_types": [
-          "image/jpeg",
-          "image/png",
-          "image/webp"
-        ]
+        "mime_types": ["image/jpeg", "image/png", "image/webp"]
       },
       "credit_policy": {
         "kind": "metered",
@@ -194,6 +267,77 @@
       },
       "execution": "server",
       "catalog_url": "/api/v1/tools/ai_video_generator/catalog"
+    },
+    {
+      "id": "ai_video_editor",
+      "title": "AI Video Editor",
+      "description": "Transform an existing video with a plain-language editing prompt.",
+      "minimum_tier": "starter",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "prompt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          "model": {
+            "type": "string",
+            "enum": [
+              "wan/2-7-videoedit",
+              "happyhorse/video-edit",
+              "runway/aleph",
+              "gemini-omni-video"
+            ]
+          },
+          "format": {
+            "type": "string",
+            "enum": ["9:16", "16:9"]
+          },
+          "duration_seconds": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 15
+          },
+          "resolution": {
+            "type": "string",
+            "enum": ["720p", "1080p", "4K"]
+          },
+          "source_duration_seconds": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 30
+          }
+        },
+        "required": [
+          "asset_id",
+          "prompt",
+          "model",
+          "format",
+          "duration_seconds",
+          "resolution",
+          "source_duration_seconds"
+        ],
+        "additionalProperties": false
+      },
+      "upload": {
+        "max_bytes": 104857600,
+        "mime_types": ["video/mp4", "video/quicktime"]
+      },
+      "credit_policy": {
+        "kind": "metered",
+        "credits": null,
+        "label": "Credits depend on model and resolution"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/ai_video_editor/catalog"
     },
     {
       "id": "ai_ad_generator",
@@ -224,10 +368,7 @@
           },
           "format": {
             "type": "string",
-            "enum": [
-              "9:16",
-              "16:9"
-            ]
+            "enum": ["9:16", "16:9"]
           },
           "duration_seconds": {
             "type": "integer",
@@ -240,34 +381,19 @@
           },
           "grok_mode": {
             "type": "string",
-            "enum": [
-              "normal",
-              "fun",
-              "spicy"
-            ]
+            "enum": ["normal", "fun"]
           },
           "grok_resolution": {
             "type": "string",
-            "enum": [
-              "480p",
-              "720p"
-            ]
+            "enum": ["480p", "720p"]
           },
           "seedance_resolution": {
             "type": "string",
-            "enum": [
-              "480p",
-              "720p",
-              "1080p"
-            ]
+            "enum": ["480p", "720p", "1080p"]
           },
           "omni_resolution": {
             "type": "string",
-            "enum": [
-              "720p",
-              "1080p",
-              "4K"
-            ]
+            "enum": ["720p", "1080p", "4K"]
           },
           "audio_enabled": {
             "type": "boolean"
@@ -308,11 +434,7 @@
       },
       "upload": {
         "max_bytes": 10485760,
-        "mime_types": [
-          "image/jpeg",
-          "image/png",
-          "image/webp"
-        ]
+        "mime_types": ["image/jpeg", "image/png", "image/webp"]
       },
       "credit_policy": {
         "kind": "metered",
@@ -348,36 +470,19 @@
           },
           "model": {
             "type": "string",
-            "enum": [
-              "nano-banana-2",
-              "nano-banana-pro",
-              "gpt-image-2"
-            ]
+            "enum": ["nano-banana-2", "nano-banana-pro", "gpt-image-2"]
           },
           "aspect_ratio": {
             "type": "string",
-            "enum": [
-              "1:1",
-              "9:16",
-              "16:9"
-            ]
+            "enum": ["1:1", "9:16", "16:9"]
           }
         },
-        "required": [
-          "input_asset_ids",
-          "prompt",
-          "model",
-          "aspect_ratio"
-        ],
+        "required": ["input_asset_ids", "prompt", "model", "aspect_ratio"],
         "additionalProperties": false
       },
       "upload": {
         "max_bytes": 10485760,
-        "mime_types": [
-          "image/jpeg",
-          "image/png",
-          "image/webp"
-        ]
+        "mime_types": ["image/jpeg", "image/png", "image/webp"]
       },
       "credit_policy": {
         "kind": "metered",
@@ -409,27 +514,15 @@
           },
           "model": {
             "type": "string",
-            "enum": [
-              "recraft",
-              "flux-kontext-pro",
-              "flux-kontext-max"
-            ]
+            "enum": ["recraft", "flux-kontext-pro", "flux-kontext-max"]
           }
         },
-        "required": [
-          "asset_id",
-          "file_name",
-          "model"
-        ],
+        "required": ["asset_id", "file_name", "model"],
         "additionalProperties": false
       },
       "upload": {
         "max_bytes": 5242880,
-        "mime_types": [
-          "image/jpeg",
-          "image/png",
-          "image/webp"
-        ]
+        "mime_types": ["image/jpeg", "image/png", "image/webp"]
       },
       "credit_policy": {
         "kind": "metered",
@@ -479,10 +572,7 @@
               "caption_mode": {
                 "default": "single_word",
                 "type": "string",
-                "enum": [
-                  "single_word",
-                  "three_word_highlight"
-                ]
+                "enum": ["single_word", "three_word_highlight"]
               },
               "caption_group_size": {
                 "default": 1,
@@ -566,20 +656,12 @@
               "video_layout_mode": {
                 "default": "blur",
                 "type": "string",
-                "enum": [
-                  "blur",
-                  "fill",
-                  "gameplay"
-                ]
+                "enum": ["blur", "fill", "gameplay"]
               },
               "clip_length_mode": {
                 "default": "auto",
                 "type": "string",
-                "enum": [
-                  "auto",
-                  "short",
-                  "medium"
-                ]
+                "enum": ["auto", "short", "medium"]
               },
               "analysis_start_seconds": {
                 "default": 0,
@@ -631,18 +713,12 @@
             "additionalProperties": false
           }
         },
-        "required": [
-          "options"
-        ],
+        "required": ["options"],
         "additionalProperties": false
       },
       "upload": {
         "max_bytes": 2147483648,
-        "mime_types": [
-          "video/mp4",
-          "video/quicktime",
-          "video/webm"
-        ]
+        "mime_types": ["video/mp4", "video/quicktime", "video/webm"]
       },
       "credit_policy": {
         "kind": "metered",
@@ -651,6 +727,162 @@
       },
       "execution": "server",
       "catalog_url": "/api/v1/tools/ai_clipper/catalog"
+    },
+    {
+      "id": "clip_discovery",
+      "title": "Find Clips by Prompt",
+      "description": "Describe a moment to find matching video clips, adjust their timing, and download them.",
+      "minimum_tier": "starter",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 600
+          },
+          "duration": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 7200
+          },
+          "max_clip_seconds": {
+            "anyOf": [
+              {
+                "type": "number",
+                "const": 30
+              },
+              {
+                "type": "number",
+                "const": 60
+              },
+              {
+                "type": "number",
+                "const": 90
+              }
+            ]
+          },
+          "cues": {
+            "minItems": 1,
+            "maxItems": 6000,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "start": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "end": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2000
+                }
+              },
+              "required": ["start", "end", "text"],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": ["prompt", "duration", "max_clip_seconds", "cues"],
+        "additionalProperties": false
+      },
+      "upload": {
+        "max_bytes": 2147483648,
+        "mime_types": ["video/mp4", "video/quicktime", "video/webm"]
+      },
+      "credit_policy": {
+        "kind": "metered",
+        "credits": null,
+        "label": "1 credit per started 10 minutes of transcript; 1-credit minimum"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/clip_discovery/catalog"
+    },
+    {
+      "id": "ai_broll",
+      "title": "AI B-Roll",
+      "description": "Add relevant AI images, AI video, or stock footage to your video.",
+      "minimum_tier": "starter",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "source_url": {
+            "type": "string",
+            "maxLength": 2048
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "default": "image",
+                "type": "string",
+                "enum": ["image", "video", "stock"]
+              },
+              "captions_enabled": {
+                "default": false,
+                "type": "boolean"
+              },
+              "start_seconds": {
+                "default": 0,
+                "type": "number",
+                "minimum": 0
+              },
+              "end_seconds": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 43200
+              },
+              "max_shots": {
+                "default": 12,
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 120
+              },
+              "style": {
+                "default": "natural",
+                "type": "string",
+                "enum": ["natural", "cinematic", "illustration"]
+              }
+            },
+            "required": [
+              "mode",
+              "captions_enabled",
+              "start_seconds",
+              "end_seconds",
+              "max_shots",
+              "style"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": ["options"],
+        "additionalProperties": false
+      },
+      "upload": {
+        "max_bytes": 2147483648,
+        "mime_types": ["video/mp4", "video/quicktime", "video/webm"]
+      },
+      "credit_policy": {
+        "kind": "metered",
+        "credits": null,
+        "label": "Credits depend on video length and B-roll mode"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/ai_broll/catalog"
     },
     {
       "id": "ai_captions",
@@ -703,10 +935,7 @@
               "caption_mode": {
                 "default": "single_word",
                 "type": "string",
-                "enum": [
-                  "single_word",
-                  "three_word_highlight"
-                ]
+                "enum": ["single_word", "three_word_highlight"]
               },
               "caption_group_size": {
                 "default": 1,
@@ -797,20 +1026,12 @@
             "additionalProperties": false
           }
         },
-        "required": [
-          "duration_seconds",
-          "start_seconds",
-          "options"
-        ],
+        "required": ["duration_seconds", "start_seconds", "options"],
         "additionalProperties": false
       },
       "upload": {
         "max_bytes": 4294967296,
-        "mime_types": [
-          "video/mp4",
-          "video/quicktime",
-          "video/webm"
-        ]
+        "mime_types": ["video/mp4", "video/quicktime", "video/webm"]
       },
       "credit_policy": {
         "kind": "metered",
@@ -861,11 +1082,7 @@
       },
       "upload": {
         "max_bytes": 524288000,
-        "mime_types": [
-          "video/mp4",
-          "video/quicktime",
-          "video/webm"
-        ]
+        "mime_types": ["video/mp4", "video/quicktime", "video/webm"]
       },
       "credit_policy": {
         "kind": "metered",
@@ -924,12 +1141,7 @@
                 "maximum": 100
               }
             },
-            "required": [
-              "x",
-              "y",
-              "width",
-              "height"
-            ],
+            "required": ["x", "y", "width", "height"],
             "additionalProperties": false
           },
           "catalog_tool_code": {
@@ -941,12 +1153,7 @@
             ]
           }
         },
-        "required": [
-          "asset_id",
-          "file_name",
-          "duration_seconds",
-          "region"
-        ],
+        "required": ["asset_id", "file_name", "duration_seconds", "region"],
         "additionalProperties": false
       },
       "upload": {
@@ -1017,12 +1224,7 @@
                 "maximum": 100
               }
             },
-            "required": [
-              "x",
-              "y",
-              "width",
-              "height"
-            ],
+            "required": ["x", "y", "width", "height"],
             "additionalProperties": false
           },
           "catalog_tool_code": {
@@ -1034,12 +1236,7 @@
             ]
           }
         },
-        "required": [
-          "asset_id",
-          "file_name",
-          "duration_seconds",
-          "region"
-        ],
+        "required": ["asset_id", "file_name", "duration_seconds", "region"],
         "additionalProperties": false
       },
       "upload": {
@@ -1110,12 +1307,7 @@
                 "maximum": 100
               }
             },
-            "required": [
-              "x",
-              "y",
-              "width",
-              "height"
-            ],
+            "required": ["x", "y", "width", "height"],
             "additionalProperties": false
           },
           "catalog_tool_code": {
@@ -1127,12 +1319,7 @@
             ]
           }
         },
-        "required": [
-          "asset_id",
-          "file_name",
-          "duration_seconds",
-          "region"
-        ],
+        "required": ["asset_id", "file_name", "duration_seconds", "region"],
         "additionalProperties": false
       },
       "upload": {
@@ -1175,10 +1362,7 @@
             "maxLength": 255
           }
         },
-        "required": [
-          "source_url",
-          "file_name"
-        ],
+        "required": ["source_url", "file_name"],
         "additionalProperties": false
       },
       "upload": null,
@@ -1189,6 +1373,76 @@
       },
       "execution": "server",
       "catalog_url": "/api/v1/tools/sora_watermark/catalog"
+    },
+    {
+      "id": "gemini_watermark_remover",
+      "title": "Gemini Watermark Remover",
+      "description": "Remove supported visible Gemini image watermarks on the server. Results identify applied, needs_review, or unsupported_watermark_style for each image.",
+      "minimum_tier": "free",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "input_asset_ids": {
+            "minItems": 1,
+            "maxItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        },
+        "required": ["input_asset_ids"],
+        "additionalProperties": false
+      },
+      "upload": {
+        "max_bytes": 10485760,
+        "mime_types": ["image/jpeg", "image/png", "image/webp"]
+      },
+      "credit_policy": {
+        "kind": "free",
+        "label": "Free · server processing"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/gemini_watermark_remover/catalog"
+    },
+    {
+      "id": "gemini_watermark_bulk_remover",
+      "title": "Gemini Watermark Bulk Remover",
+      "description": "Remove supported visible Gemini image watermarks on the server. Results identify applied, needs_review, or unsupported_watermark_style for each image.",
+      "minimum_tier": "free",
+      "release_stage": "beta",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "input_asset_ids": {
+            "minItems": 1,
+            "maxItems": 50,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        },
+        "required": ["input_asset_ids"],
+        "additionalProperties": false
+      },
+      "upload": {
+        "max_bytes": 10485760,
+        "mime_types": ["image/jpeg", "image/png", "image/webp"]
+      },
+      "credit_policy": {
+        "kind": "free",
+        "label": "Free · server processing"
+      },
+      "execution": "server",
+      "catalog_url": "/api/v1/tools/gemini_watermark_bulk_remover/catalog"
     },
     {
       "id": "ai_voiceover",
@@ -1229,10 +1483,7 @@
           },
           "voice_source": {
             "type": "string",
-            "enum": [
-              "library",
-              "custom"
-            ]
+            "enum": ["library", "custom"]
           },
           "stability": {
             "type": "number",
@@ -1268,9 +1519,9 @@
       },
       "upload": null,
       "credit_policy": {
-        "kind": "free",
-        "credits": 0,
-        "label": "No credits used"
+        "kind": "metered",
+        "credits": null,
+        "label": "3 credits minimum · per-character pricing by model"
       },
       "execution": "server",
       "catalog_url": "/api/v1/tools/ai_voiceover/catalog"
@@ -1335,10 +1586,7 @@
           },
           "voice_source": {
             "type": "string",
-            "enum": [
-              "library",
-              "custom"
-            ]
+            "enum": ["library", "custom"]
           },
           "stability": {
             "type": "number",
@@ -1361,11 +1609,7 @@
           "caption_content_mode": {
             "default": "auto",
             "type": "string",
-            "enum": [
-              "auto",
-              "speech_subtitles",
-              "independent_text"
-            ]
+            "enum": ["auto", "speech_subtitles", "independent_text"]
           },
           "caption_region_override": {
             "anyOf": [
@@ -1393,12 +1637,7 @@
                     "maximum": 100
                   }
                 },
-                "required": [
-                  "x",
-                  "y",
-                  "width",
-                  "height"
-                ],
+                "required": ["x", "y", "width", "height"],
                 "additionalProperties": false
               },
               {
@@ -1491,11 +1730,7 @@
       },
       "upload": {
         "max_bytes": 524288000,
-        "mime_types": [
-          "video/mp4",
-          "video/quicktime",
-          "video/webm"
-        ]
+        "mime_types": ["video/mp4", "video/quicktime", "video/webm"]
       },
       "credit_policy": {
         "kind": "metered",
@@ -1588,10 +1823,7 @@
           },
           "voice_source": {
             "type": "string",
-            "enum": [
-              "library",
-              "custom"
-            ]
+            "enum": ["library", "custom"]
           },
           "stability": {
             "type": "number",
@@ -1620,10 +1852,7 @@
           },
           "caption_style": {
             "type": "string",
-            "enum": [
-              "single_word",
-              "three_word_highlight"
-            ]
+            "enum": ["single_word", "three_word_highlight"]
           },
           "caption_group_size": {
             "type": "integer",
@@ -1665,12 +1894,7 @@
                   "pattern": "^#[0-9A-Fa-f]{6}$"
                 }
               },
-              "required": [
-                "id",
-                "start_seconds",
-                "end_seconds",
-                "text"
-              ],
+              "required": ["id", "start_seconds", "end_seconds", "text"],
               "additionalProperties": false
             }
           },
@@ -1790,7 +2014,7 @@
       "credit_policy": {
         "kind": "metered",
         "credits": null,
-        "label": "Credits depend on narration and render duration"
+        "label": "Narration from 3 credits · render 2 credits per minute"
       },
       "execution": "server",
       "catalog_url": "/api/v1/tools/roblox_rant/catalog"
@@ -1812,11 +2036,7 @@
           },
           "platform": {
             "type": "string",
-            "enum": [
-              "youtube",
-              "tiktok",
-              "instagram"
-            ]
+            "enum": ["youtube", "tiktok", "instagram"]
           },
           "file_name": {
             "type": "string",
@@ -1966,10 +2186,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "source_url",
-          "include_timestamps"
-        ],
+        "required": ["source_url", "include_timestamps"],
         "additionalProperties": false
       },
       "upload": null,
@@ -2000,10 +2217,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "source_url",
-          "include_timestamps"
-        ],
+        "required": ["source_url", "include_timestamps"],
         "additionalProperties": false
       },
       "upload": null,
@@ -2032,10 +2246,7 @@
           },
           "operation": {
             "type": "string",
-            "enum": [
-              "extract_mp3",
-              "mute_video"
-            ]
+            "enum": ["extract_mp3", "mute_video"]
           },
           "file_name": {
             "type": "string",
@@ -2043,11 +2254,7 @@
             "maxLength": 255
           }
         },
-        "required": [
-          "asset_id",
-          "operation",
-          "file_name"
-        ],
+        "required": ["asset_id", "operation", "file_name"],
         "additionalProperties": false
       },
       "upload": {
@@ -2188,10 +2395,7 @@
           },
           "mode": {
             "type": "string",
-            "enum": [
-              "rect",
-              "ratio"
-            ]
+            "enum": ["rect", "ratio"]
           },
           "crop_x": {
             "anyOf": [
@@ -2329,12 +2533,7 @@
             "exclusiveMinimum": 0
           }
         },
-        "required": [
-          "asset_id",
-          "file_name",
-          "start_time",
-          "end_time"
-        ],
+        "required": ["asset_id", "file_name", "start_time", "end_time"],
         "additionalProperties": false
       },
       "upload": {

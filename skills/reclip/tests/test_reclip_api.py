@@ -69,9 +69,11 @@ class FakeAPI:
         self.calls.append((operation, resource, copy.deepcopy(data), kwargs))
         if operation == 'identity':
             return {'workspace_id': 'workspace-1', 'key_id': self.key_id}
+        if operation == 'quote-broll-shot':
+            return {'credits': self.estimate}
         if operation == 'quote':
             return {'estimated_credits': self.estimate, 'affordable': True}
-        if operation in {'submit', 'export-clip'}:
+        if operation in {'submit', 'export-clip', 'export-broll', 'regenerate-broll-shot'}:
             if self.boom:
                 raise a.ClientError('uncertain outcome')
             return {'id': JOB, 'replayed': False}
@@ -149,9 +151,26 @@ class StateTests(unittest.TestCase):
         self.assertFalse(self.path.exists())
 
     def test_large_valid_request_state_can_resume(self):
-        payload = dict(BODY, input={'text': 'x' * 230000})
+        payload = dict(BODY, input={'text': 'x' * 1400000})
         a.submit_saved(self.api, 'submit', payload, self.path)
         self.assertTrue(a.submit_saved(self.api, 'submit', payload, self.path)['replayed'])
+
+    def test_broll_regeneration_is_quoted_bounded_and_replayed(self):
+        payload = {'revision': 1, 'shot_id': 'shot-1', 'prompt': 'A sunset', 'mode': 'image', 'maximum_credits': 20}
+        a.submit_saved(self.api, 'regenerate-broll-shot', payload, self.path, ID)
+        before = len(self.api.calls)
+        self.assertTrue(a.submit_saved(self.api, 'regenerate-broll-shot', payload, self.path, ID)['replayed'])
+        self.assertEqual([c[0] for c in self.api.calls].count('quote-broll-shot'), 1)
+        self.assertEqual([c[0] for c in self.api.calls].count('regenerate-broll-shot'), 1)
+        self.assertEqual(len(self.api.calls), before + 1)
+
+    def test_broll_regeneration_above_budget_never_submits(self):
+        self.api.estimate = 21
+        payload = {'revision': 1, 'shot_id': 'shot-1', 'prompt': 'A sunset', 'mode': 'image', 'maximum_credits': 20}
+        with self.assertRaises(a.ClientError):
+            a.submit_saved(self.api, 'regenerate-broll-shot', payload, self.path, ID)
+        self.assertFalse(self.path.exists())
+        self.assertNotIn('regenerate-broll-shot', [c[0] for c in self.api.calls])
 
     def test_exports_use_revision_without_invented_quote(self):
         a.submit_saved(self.api, 'export-clip', {'editor_revision': 2}, self.path, ID)
@@ -262,7 +281,7 @@ class TransportTests(unittest.TestCase):
         thread = threading.Thread(target=server.serve_forever, daemon=True)
         thread.start()
         try:
-            client = a.Client(base='http://127.0.0.1:{}/api/v1'.format(server.server_port), key='test-key')
+            client = a.Client(base='http://127.0.0.1:{}/api/v1'.format(server.server_port), key='test-key', opener=a.urllib.request.build_opener(a.urllib.request.ProxyHandler({}), a.NoRedirect()))
             with self.assertRaises(a.ApiError) as error:
                 client.call('identity')
             self.assertEqual(error.exception.status, 302)
@@ -309,7 +328,7 @@ class TransportTests(unittest.TestCase):
 
     def test_allowlist_and_paths(self):
         client = a.Client(key='test-key', opener=Transport())
-        for operation, resource in [('https://evil.example', None), ('asset', '../../me'), ('tool', 'gemini_watermark_remover')]:
+        for operation, resource in [('https://evil.example', None), ('asset', '../../me'), ('tool', 'unknown_tool')]:
             with self.assertRaises(a.ClientError):
                 client.call(operation, resource)
         with self.assertRaises(a.ClientError):
@@ -349,7 +368,7 @@ class TransportTests(unittest.TestCase):
             with self.subTest(name=name):
                 t = Transport({})
                 resource = 'ai_clipper' if '{tool}' in path else ID if '{id}' in path else None
-                a.Client(key='test-key', opener=t).call(name, resource, idempotency='operation-test' if name in {'submit', 'export-clip'} else None)
+                a.Client(key='test-key', opener=t).call(name, resource, idempotency='operation-test' if name in {'submit', 'export-clip', 'export-broll', 'regenerate-broll-shot'} else None)
                 self.assertEqual(t.requests[0].method, method)
                 self.assertEqual(t.requests[0].full_url, a.DEFAULT_BASE + path.replace('{id}', ID).replace('{tool}', 'ai_clipper'))
 

@@ -2,10 +2,75 @@
   "source": {
     "repository": "https://github.com/asterism-software/reclip-io",
     "branch": "api-dev",
-    "commit": "2059685938ec59f5277269b2ca73b723253be45d",
-    "api_version": "1.0.0-beta.1"
+    "commit": "c6848d01f46f8b95de0341e669e43c80e192d801",
+    "merged_main": "d5cd323be55a56365543d8b602216d7ca736ce27",
+    "working_tree": true,
+    "api_version": "1.0.0-beta.2",
+    "tool_codes": [
+      "video_upscaler",
+      "ai_clone",
+      "ai_video_generator",
+      "ai_video_editor",
+      "ai_ad_generator",
+      "ai_image_generator",
+      "image_background_remover",
+      "ai_clipper",
+      "clip_discovery",
+      "ai_broll",
+      "ai_captions",
+      "video_to_prompt",
+      "caption_remover",
+      "video_subtitle_remover",
+      "watermark_remover",
+      "sora_watermark",
+      "gemini_watermark_remover",
+      "gemini_watermark_bulk_remover",
+      "ai_voiceover",
+      "translate_and_dub",
+      "roblox_rant",
+      "video_downloader",
+      "youtube_transcript",
+      "tiktok_transcript",
+      "mp4_to_mp3",
+      "video_compressor",
+      "video_cropper",
+      "video_trimmer",
+      "video_to_gif",
+      "transcription"
+    ],
+    "contract_sha256": "90a696cfe77779b6cce038c94a1d477328a805d025187655f0757af7772a527d"
   },
   "operations": [
+    {
+      "method": "GET",
+      "path": "/broll/{id}",
+      "operation_id": "get_b-roll_composition",
+      "description": "Required scopes: jobs:read. Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "PATCH",
+      "path": "/broll/{id}",
+      "operation_id": "edit_b-roll_composition",
+      "description": "Required scopes: assets:write. Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "POST",
+      "path": "/broll/{id}/exports",
+      "operation_id": "export_b-roll_composition",
+      "description": "Required scopes: jobs:write. Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "POST",
+      "path": "/broll/{id}/regenerate-quote",
+      "operation_id": "quote_b-roll_shot_regeneration",
+      "description": "Required scopes: jobs:write. Beta API. Availability depends on deployment enablement."
+    },
+    {
+      "method": "POST",
+      "path": "/broll/{id}/regenerate",
+      "operation_id": "regenerate_b-roll_shot",
+      "description": "Required scopes: jobs:write. Beta API. Availability depends on deployment enablement."
+    },
     {
       "method": "POST",
       "path": "/tools/roblox_rant/projects",

@@ -31,13 +31,13 @@ def main():
     ops = json.loads((SKILL / 'references/operations.json').read_text())
     catalog = json.loads((SKILL / 'references/tool-catalog.json').read_text())
     assert ops['source'] == catalog['source'], 'Mixed backend snapshots'
-    assert len(client.TOOLS) == len(set(client.TOOLS)) == 24, 'Expected 24 server tools'
+    assert len(client.TOOLS) == len(set(client.TOOLS)) == len(catalog['source']['tool_codes']), 'Incomplete tool coverage'
     assert set(client.OPERATIONS.values()) == {(o['method'], o['path']) for o in ops['operations']}, 'Client differs from backend snapshot'
-    assert len(client.OPERATIONS) == 23, 'Expected 23 API operations'
+    assert set(client.TOOLS) == set(catalog['source']['tool_codes']), 'Tool catalog differs from product registry'
     manifest = json.loads((ROOT / 'manifest.json').read_text())
     assert manifest['skills'][0]['path'] == 'skills/reclip'
     assert manifest['version'] == client.VERSION
-    print('Validated: self-contained skill, local links, Python 3.9 syntax, 24 tools, 23 API operations.')
+    print('Validated: self-contained skill, Python 3.9 syntax, %d tools, %d operations.' % (len(client.TOOLS), len(client.OPERATIONS)))
 
 
 if __name__ == '__main__':

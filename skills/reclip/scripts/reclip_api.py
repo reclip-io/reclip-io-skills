@@ -19,15 +19,20 @@ import urllib.parse
 import urllib.request
 import uuid
 
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 DEFAULT_BASE = "https://www.reclip.io/api/v1"
-MAX_JSON = 256 * 1024
+MAX_JSON = 1536 * 1024
 MAX_RESPONSE = 16 * 1024 * 1024
 TERMINAL = {"succeeded", "failed", "canceled"}
 REFERENCES = Path(__file__).resolve().parents[1] / "references"
 CATALOG = json.loads((REFERENCES / "tool-catalog.json").read_text(encoding="utf-8"))
 TOOLS = tuple(t["id"] for t in CATALOG["tools"])
 OPERATIONS = {
+    "broll": ("GET", "/broll/{id}"),
+    "edit-broll": ("PATCH", "/broll/{id}"),
+    "export-broll": ("POST", "/broll/{id}/exports"),
+    "quote-broll-shot": ("POST", "/broll/{id}/regenerate-quote"),
+    "regenerate-broll-shot": ("POST", "/broll/{id}/regenerate"),
     "identity": ("GET", "/me"), "tools": ("GET", "/tools"),
     "tool": ("GET", "/tools/{tool}"), "catalog": ("GET", "/tools/{tool}/catalog"),
     "usage": ("GET", "/usage"), "asset": ("GET", "/assets/{id}"),
@@ -84,7 +89,7 @@ def encode_json(value):
     except (ValueError, TypeError, RecursionError):
         raise ClientError("Expected finite, serializable JSON values.") from None
     if len(encoded) > MAX_JSON:
-        raise ClientError("API JSON bodies must not exceed 256 KiB.")
+        raise ClientError("API JSON bodies must not exceed 1.5 MiB.")
     return encoded
 
 
@@ -107,7 +112,7 @@ def job_payload(value, budget=None):
     if not isinstance(value, dict) or set(value) - {"tool", "input", "options", "project_id", "maximum_outputs", "maximum_credits"}:
         raise ClientError("Unsupported job envelope field.")
     if value.get("tool") not in TOOLS:
-        raise ClientError("Choose a supported server tool; Gemini watermark tools require a browser.")
+        raise ClientError("Choose a tool from the current Reclip catalog.")
     if not isinstance(value.get("input"), dict):
         raise ClientError("A job requires an input object.")
     if "options" in value and (not isinstance(value["options"], dict) or "options" in value["input"]):
@@ -201,7 +206,7 @@ class Client:
                 raise ClientError("This operation does not accept pagination.")
             path += "?page=" + str(integer(page, 1, 10000))
         body = encode_json(data) if data is not None else None
-        if operation in {"submit", "export-clip"} and not idempotency:
+        if operation in {"submit", "export-clip", "export-broll", "regenerate-broll-shot"} and not idempotency:
             raise ClientError("Use a durable state file for job submission.")
         if idempotency and not re.fullmatch(r"[A-Za-z0-9:_-]{8,160}", idempotency):
             raise ClientError("Invalid idempotency key.")
@@ -302,7 +307,7 @@ def check_context(state, context):
 
 
 def submit_saved(client, operation, payload, state_path, resource=None):
-    if operation not in {"submit", "export-clip"}:
+    if operation not in {"submit", "export-clip", "export-broll", "regenerate-broll-shot"}:
         raise ClientError("Only job creation and exports use saved submission state.")
     with locked_state(state_path) as path:
         context = identity_context(client)
@@ -321,6 +326,10 @@ def submit_saved(client, operation, payload, state_path, resource=None):
                     raise ClientError("The API did not return a usable quote.")
                 if estimate > budget or not quote.get("affordable"):
                     raise ClientError("Quote exceeds the authorized budget or available balance; no job was submitted.")
+            if operation == "regenerate-broll-shot":
+                quote = client.call("quote-broll-shot", resource, payload)
+                if quote.get("credits", float("inf")) > integer(payload.get("maximum_credits")):
+                    raise ClientError("Regeneration quote exceeds the authorized budget.")
             state = {"version": 1, "kind": "submission", "context": context, "request": request, "idempotency_key": str(uuid.uuid4())}
             save_state(path, state)
         if state.get("job_id"):
@@ -488,7 +497,7 @@ def parser():
         q.add_argument("tool", choices=TOOLS)
         if name == "tool":
             q.add_argument("--offline", action="store_true", help="Read the bundled contract snapshot, without credentials.")
-    for name in ("asset", "status", "cancel", "clips", "clip", "project", "composition"):
+    for name in ("asset", "status", "cancel", "clips", "clip", "project", "composition", "broll"):
         sub.add_parser(name).add_argument("id")
     for name in ("jobs", "projects"):
         sub.add_parser(name).add_argument("--page", type=int, default=1)
@@ -523,6 +532,17 @@ def parser():
     q.add_argument("id")
     q.add_argument("--revision", type=int, required=True)
     q.add_argument("--state", type=Path, required=True)
+    for name in ("edit-broll", "quote-broll-shot", "regenerate-broll-shot"):
+        q = sub.add_parser(name)
+        q.add_argument("id")
+        q.add_argument("request", type=Path)
+        if name == "regenerate-broll-shot":
+            q.add_argument("--state", type=Path, required=True)
+            q.add_argument("--maximum-credits", type=int, required=True)
+    q = sub.add_parser("export-broll")
+    q.add_argument("id")
+    q.add_argument("--revision", type=int, required=True)
+    q.add_argument("--state", type=Path, required=True)
     return p
 
 
@@ -552,6 +572,14 @@ def execute(args, client=None):
         if set(data) != required:
             raise ClientError("Clip edits require captions_enabled, caption_group_size, caption_style and caption_words.")
         return client.call(cmd, args.id, data)
+    if cmd in {"edit-broll", "quote-broll-shot", "regenerate-broll-shot"}:
+        payload = read_json(args.request)
+        if cmd == "regenerate-broll-shot":
+            payload = dict(payload, maximum_credits=min(integer(args.maximum_credits), integer(payload["maximum_credits"])) if "maximum_credits" in payload else integer(args.maximum_credits))
+            return submit_saved(client, cmd, payload, args.state, identifier(args.id))
+        return client.call(cmd, identifier(args.id), payload)
+    if cmd == "export-broll":
+        return submit_saved(client, cmd, {"revision": integer(args.revision, 1)}, args.state, identifier(args.id))
     if cmd == "export-clip":
         return submit_saved(client, cmd, {"editor_revision": integer(args.revision)}, args.state, identifier(args.id))
     if cmd in {"create-project", "create-composition"}:

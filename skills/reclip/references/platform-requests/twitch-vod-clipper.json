@@ -1,0 +1,11 @@
+{
+  "tool": "ai_clipper",
+  "input": {
+    "source_url": "https://www.twitch.tv/videos/1234567890",
+    "options": {
+      "analysis_start_seconds": 0,
+      "analysis_end_seconds": 60
+    }
+  },
+  "maximum_credits": 100
+}

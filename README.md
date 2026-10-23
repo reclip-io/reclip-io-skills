@@ -18,7 +18,7 @@ For Codex, ask the skill installer to install `skills/reclip` from `https://gith
 
 ## Configure and use
 
-Requires Python 3.9+ and an API-enabled paid Reclip workspace. Create a scoped workspace key in the API dashboard → API Keys. Supply `RECLIP_API_KEY` via your environment or secret manager; do not put it in chat or a command argument. `.env.example` documents the variables. The client does **not** automatically load `.env` files.
+Requires Python 3.9+ and an API-enabled Reclip workspace with eligible API-only promotional credits, purchased credits, or a paid plan. Existing tool-specific permissions and input restrictions still apply. Create a scoped workspace key in the API dashboard → API Keys. Supply `RECLIP_API_KEY` via your environment or secret manager; do not put it in chat or a command argument. `.env.example` documents the variables. The client does **not** automatically load `.env` files.
 
 `RECLIP_API_BASE_URL` defaults to `https://www.reclip.io/api/v1`. Override it only for the Reclip deployment you intend to trust with the key. HTTPS is required except for loopback development.
 
@@ -44,6 +44,7 @@ The bundled catalog describes all 30 tools across clipping/captions, video/image
 The client covers all 28 resource operations in the pinned API contract. It adds durable idempotency state, bounded polling, upload recovery, signed downloads, and explicit per-job credit caps. Exports use editor revisions and saved state; this beta contract provides **no export quote or hard credit cap**. A Streamable HTTP MCP endpoint at `/api/mcp` exposes the same tools and resource operations with the same workspace key and scopes.
 
 - [Skill instructions](skills/reclip/SKILL.md)
+- [YouTube, TikTok, Instagram, and Twitch API requests](skills/reclip/references/platforms.md)
 - [Operations and scopes](skills/reclip/references/operations.md)
 - [API documentation repository](https://github.com/reclip-io/reclip-io-api-docs)
 - [Backend API branch](https://github.com/asterism-software/reclip-io/tree/api-dev)

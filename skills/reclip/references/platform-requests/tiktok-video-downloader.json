@@ -1,0 +1,16 @@
+{
+  "tool": "video_downloader",
+  "input": {
+    "source_url": "https://www.tiktok.com/@creator/video/1234567890123456789",
+    "platform": "tiktok",
+    "file_name": "tiktok-video.mp4",
+    "format_id": null,
+    "maximum_download_bytes": 100000000,
+    "has_audio": null,
+    "source_title": null,
+    "source_creator": null,
+    "source_thumbnail_url": null,
+    "source_duration_seconds": null
+  },
+  "maximum_credits": 100
+}

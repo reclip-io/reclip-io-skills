@@ -1,0 +1,22 @@
+{
+  "tool": "ai_captions",
+  "input": {
+    "source_url": "https://www.youtube.com/watch?v=VIDEO_ID_01",
+    "duration_seconds": 60,
+    "options": {
+      "caption_style": {
+        "font_family": "Inter",
+        "font_size": 64,
+        "position_y_percent": 75,
+        "base_color": "#FFFFFF",
+        "highlight_color": "#FFFF00",
+        "outline_color": "#000000",
+        "outline_width": 4,
+        "background_color": "#000000",
+        "background_opacity": 0,
+        "word_spacing": 0
+      }
+    }
+  },
+  "maximum_credits": 100
+}

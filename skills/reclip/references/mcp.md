@@ -7,3 +7,5 @@ Connect a Streamable HTTP client to `https://www.reclip.io/api/mcp`, with its wo
 Call `reclip_quote_job` with `body: {tool, input, options}` as appropriate, then use the corresponding product tool with the authorized credit cap. Poll using `reclip_get_job` with `id`; read `result` and `outputs`. Reuse exact payloads and idempotency keys for uncertain submits. Errors in tool execution return `isError: true`, with the REST error in `structuredContent` and the text content. JSON-RPC errors identify invalid methods or arguments.
 
 Scopes and workspace credits are shared with REST. A connected client does not authorize additional paid operations, exports, or tool chains.
+
+For YouTube, TikTok, Instagram, or Twitch sources, use the [platform request guide](platforms.md). Its ten JSON templates map to the existing product tools. Pass the template's full REST envelope under `body` when quoting, then pass its `input`, your approved `maximum_credits`, and a durable `idempotency_key` to `reclip_TOOL`. Clipping, B-roll, captions, and transcript tools take `source_url`; only the downloader also takes `platform`.

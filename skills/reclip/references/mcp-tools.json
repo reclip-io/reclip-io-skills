@@ -1,9 +1,9 @@
 {
   "source": {
     "repository": "https://github.com/asterism-software/reclip-io",
-    "branch": "api-dev",
-    "commit": "c6848d01f46f8b95de0341e669e43c80e192d801",
-    "merged_main": "d5cd323be55a56365543d8b602216d7ca736ce27",
+    "branch": "main",
+    "commit": "dedff965e2013f9b6f223fec06b3fc793e31412b",
+    "merged_main": "dedff965e2013f9b6f223fec06b3fc793e31412b",
     "working_tree": true,
     "api_version": "1.0.0-beta.2",
     "tool_codes": [

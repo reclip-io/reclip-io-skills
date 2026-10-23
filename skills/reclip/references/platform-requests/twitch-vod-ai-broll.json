@@ -1,0 +1,13 @@
+{
+  "tool": "ai_broll",
+  "input": {
+    "source_url": "https://www.twitch.tv/videos/1234567890",
+    "options": {
+      "mode": "image",
+      "start_seconds": 0,
+      "end_seconds": 60,
+      "max_shots": 3
+    }
+  },
+  "maximum_credits": 100
+}

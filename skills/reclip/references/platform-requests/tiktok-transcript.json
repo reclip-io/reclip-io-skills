@@ -1,0 +1,8 @@
+{
+  "tool": "tiktok_transcript",
+  "input": {
+    "source_url": "https://www.tiktok.com/@creator/video/1234567890123456789",
+    "include_timestamps": true
+  },
+  "maximum_credits": 100
+}
